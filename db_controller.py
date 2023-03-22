@@ -3,16 +3,16 @@ import pyodbc
 
 class DbController:
     def __init__(self):
-        self.connection_to_db = pyodbc.connect(
+        self.__connection_to_db = pyodbc.connect(
             r'Driver={SQL Server};Server=DESKTOP-EBLKJFC;Database=янтарная комната;Trusted_Connection=yes;')
-        self.cursor = self.connection_to_db.cursor()
-        self.persons = self.init_persons()
+        self.__cursor = self.__connection_to_db.cursor()
+        self.__persons = self.init_persons()
 
     def init_persons(self):
-        self.cursor.execute('SELECT id_персона, ФИО, id_гражданство, описание FROM персона')
+        self.__cursor.execute('SELECT id_персона, ФИО, id_гражданство, описание FROM персона')
         row = []
         while 1:
-            item = self.cursor.fetchone()
+            item = self.__cursor.fetchone()
             if not item:
                 break
             row.append(item)
@@ -21,4 +21,4 @@ class DbController:
         return list(persons)
 
     def get_persons(self):
-        return self.persons
+        return self.__persons
