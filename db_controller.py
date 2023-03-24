@@ -22,3 +22,9 @@ class DbController:
 
     def get_persons(self):
         return self.__persons
+
+    def add_person(self, name: str, nationality: int, description: str):
+        self.__cursor.execute("INSERT INTO персона (id_персона, ФИО, id_гражданство, описание) "
+                              "VALUES (?, ?, ?, ?)", len(self.__persons) + 1, name, nationality, description)
+        self.__connection_to_db.commit()
+        self.__persons = self.init_persons()
