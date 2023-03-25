@@ -38,6 +38,35 @@ def get_persons():
     response.status = 200
     return response
 
+@app.route('/getPlaces', methods=['GET'])
+def get_places():
+    places = db.get_places()
+    response = jsonify({'places': places})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
+
+@app.route('/getVersions', methods=['GET'])
+def get_versions():
+    versions = db.get_versions()
+    response = jsonify({'versions': versions})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
+
+@app.route('/getSearchAtt', methods=['GET'])
+def get_search_attempts():
+    search_attempts = db.get_search_attempts()
+    response = jsonify({'search_attempts': search_attempts})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
+
+
+
 
 @app.route('/addPerson', methods=['POST', 'OPTIONS'])
 def add_person():
