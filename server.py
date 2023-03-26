@@ -101,6 +101,14 @@ def get_research():
     response.status = 200
     return response
 
+@app.route('/getNationality', methods=['GET'])
+def get_nationality():
+    nationality = db.get_nationality()
+    response = jsonify({'nationality': nationality})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
 
 
 

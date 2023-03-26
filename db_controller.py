@@ -6,6 +6,7 @@ class DbController:
         self.__connection_to_db = pyodbc.connect(
             r'Driver={SQL Server};Server=DESKTOP-LCT9RP5;Database=янтарная комната;Trusted_Connection=yes;')
         self.__cursor = self.__connection_to_db.cursor()
+        self.__nationality = self.init_nationality()
         self.__persons = self.init_persons()
         self.__places = self.init_places()
         self.__versions = self.init_versions()
@@ -23,7 +24,10 @@ class DbController:
             if not item:
                 break
             row.append(item)
-        persons = map(lambda x: {'id': int(x.id_персона), 'name': x.ФИО, 'id_nationality': int(x.id_гражданство),
+
+        #nationality = map(lambda x: {self.__nationality['id']}, self.__nationality)
+        persons = map(lambda x: {'id': int(x.id_персона), 'name': x.ФИО,
+                                 'id_nationality': int(x.id_гражданство) ,
                                  'description': x.описание}, row)
         return list(persons)
 
@@ -40,6 +44,21 @@ class DbController:
             row.append(item)
         places = map(lambda x: {'id': int(x.id_места), 'name': x.место, 'description': x.описание}, row)
         return list(places)
+
+    def init_nationality(self):
+
+        self.__cursor.execute('SELECT id_гражданство, гражданство FROM гражданство')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        nationality = map(lambda x: {'id': int(x.id_гражданство), 'nationality': x.гражданство}, row)
+        return list(nationality)
+
+    def get_nationality(self):
+        return self.__nationality
 
     def get_places(self):
         return self.__places
@@ -67,8 +86,9 @@ class DbController:
             if not item:
                 break
             row.append(item)
-        search_att = map(lambda x: {'id': int(x.id_попытка_поиска), 'id_versions': int(x.id_версия), 'date_start': x.дата_начала,
-                                 'date_finish': x.дата_окончания}, row)
+        search_att = map(
+            lambda x: {'id': int(x.id_попытка_поиска), 'id_versions': int(x.id_версия), 'date_start': x.дата_начала,
+                       'date_finish': x.дата_окончания}, row)
         return list(search_att)
 
     def get_search_attempts(self):
@@ -84,9 +104,8 @@ class DbController:
                 break
             row.append(item)
         find = map(lambda x: {'id': int(x.id_находки), 'name': x.находка, 'date': x.дата_создания,
-                                 'id_search_attempts': int(x.id_попытка_поиска), 'description': x.описание}, row)
+                              'id_search_attempts': int(x.id_попытка_поиска), 'description': x.описание}, row)
         return list(find)
-
 
     def get_finds(self):
         return self.__finds
@@ -100,14 +119,13 @@ class DbController:
             if not item:
                 break
             row.append(item)
-        document = map(lambda x: {'id': int(x.id_документ), 'id_type_doc': int(x.id_тип_документа), 'id_search_attempts': x.id_попытка_поиска,
-                                 'date': x.дата, 'description': x.описание}, row)
+        document = map(lambda x: {'id': int(x.id_документ), 'id_type_doc': int(x.id_тип_документа),
+                                  'id_search_attempts': x.id_попытка_поиска,
+                                  'date': x.дата, 'description': x.описание}, row)
         return list(document)
-
 
     def get_document(self):
         return self.__document
-
 
     def init_indication(self):
 
@@ -118,39 +136,32 @@ class DbController:
             if not item:
                 break
             row.append(item)
-        indication = map(lambda x: {'id': int(x.id_показание), 'id_persons': int(x.id_персона), 'testimony': x.показание,
-                                 'id_versions': int(x.id_версия), 'date': x.дата}, row)
+        indication = map(
+            lambda x: {'id': int(x.id_показание), 'id_persons': int(x.id_персона), 'testimony': x.показание,
+                       'id_versions': int(x.id_версия), 'date': x.дата}, row)
         return list(indication)
-
 
     def get_indication(self):
         return self.__indication
 
-
     def init_research(self):
 
-        self.__cursor.execute('SELECT id_исследование, id_организация, id_попытка_поиска, описание, id_тип_исследования, локальное_место FROM исследование')
+        self.__cursor.execute(
+            'SELECT id_исследование, id_организация, id_попытка_поиска, описание, id_тип_исследования, локальное_место FROM исследование')
         row = []
         while 1:
             item = self.__cursor.fetchone()
             if not item:
                 break
             row.append(item)
-        research = map(lambda x: {'id': int(x.id_исследование), 'id_organization': x.id_организация, 'id_search_attempts': x.id_попытка_поиска,
-                                 'description': x.описание, 'id_type_research': int(x.id_тип_исследования), 'local_place': x.локальное_место}, row)
+        research = map(lambda x: {'id': int(x.id_исследование), 'id_organization': x.id_организация,
+                                  'id_search_attempts': x.id_попытка_поиска,
+                                  'description': x.описание, 'id_type_research': int(x.id_тип_исследования),
+                                  'local_place': x.локальное_место}, row)
         return list(research)
-
 
     def get_research(self):
         return self.__research
-
-
-
-
-
-
-
-
 
     def add_person(self, name: str, nationality: int, description: str):
         self.__cursor.execute("INSERT INTO персона (id_персона, ФИО, id_гражданство, описание) "
