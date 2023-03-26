@@ -10,6 +10,10 @@ class DbController:
         self.__places = self.init_places()
         self.__versions = self.init_versions()
         self.__search_attempts = self.init_search_attempts()
+        self.__finds = self.init_finds()
+        self.__document = self.init_document()
+        self.__indication = self.init_indication()
+        self.__research = self.init_research()
 
     def init_persons(self):
         self.__cursor.execute('SELECT id_персона, ФИО, id_гражданство, описание FROM персона')
@@ -55,6 +59,7 @@ class DbController:
         return self.__versions
 
     def init_search_attempts(self):
+
         self.__cursor.execute('SELECT id_попытка_поиска, id_версия, дата_начала, дата_окончания FROM попытка_поиска')
         row = []
         while 1:
@@ -69,6 +74,75 @@ class DbController:
     def get_search_attempts(self):
         return self.__search_attempts
 
+    def init_finds(self):
+
+        self.__cursor.execute('SELECT id_находки, находка, дата_создания, id_попытка_поиска, описание FROM находки')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        find = map(lambda x: {'id': int(x.id_находки), 'name': x.находка, 'date': x.дата_создания,
+                                 'id_search_attempts': int(x.id_попытка_поиска), 'description': x.описание}, row)
+        return list(find)
+
+
+    def get_finds(self):
+        return self.__finds
+
+    def init_document(self):
+
+        self.__cursor.execute('SELECT id_документ, id_тип_документа, id_попытка_поиска, дата, описание FROM документ')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        document = map(lambda x: {'id': int(x.id_документ), 'id_type_doc': int(x.id_тип_документа), 'id_search_attempts': x.id_попытка_поиска,
+                                 'date': x.дата, 'description': x.описание}, row)
+        return list(document)
+
+
+    def get_document(self):
+        return self.__document
+
+
+    def init_indication(self):
+
+        self.__cursor.execute('SELECT id_показание, id_персона, показание, id_версия, дата FROM показание')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        indication = map(lambda x: {'id': int(x.id_показание), 'id_persons': int(x.id_персона), 'testimony': x.показание,
+                                 'id_versions': int(x.id_версия), 'date': x.дата}, row)
+        return list(indication)
+
+
+    def get_indication(self):
+        return self.__indication
+
+
+    def init_research(self):
+
+        self.__cursor.execute('SELECT id_исследование, id_организация, id_попытка_поиска, описание, id_тип_исследования, локальное_место FROM исследование')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        research = map(lambda x: {'id': int(x.id_исследование), 'id_organization': x.id_организация, 'id_search_attempts': x.id_попытка_поиска,
+                                 'description': x.описание, 'id_type_research': int(x.id_тип_исследования), 'local_place': x.локальное_место}, row)
+        return list(research)
+
+
+    def get_research(self):
+        return self.__research
 
 
 

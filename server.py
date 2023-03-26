@@ -65,6 +65,43 @@ def get_search_attempts():
     response.status = 200
     return response
 
+@app.route('/getFinds', methods=['GET'])
+def get_finds():
+    find = db.get_finds()
+    response = jsonify({'find': find})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
+
+@app.route('/getDocument', methods=['GET'])
+def get_document():
+    document = db.get_document()
+    response = jsonify({'document': document})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
+
+@app.route('/getIndication', methods=['GET'])
+def get_indication():
+    indications = db.get_indication()
+    response = jsonify({'indications': indications})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
+
+@app.route('/getResearch', methods=['GET'])
+def get_research():
+    research = db.get_research()
+    response = jsonify({'research': research})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
+
+
 
 
 
