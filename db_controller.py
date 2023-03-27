@@ -7,11 +7,14 @@ class DbController:
             r'Driver={SQL Server};Server=DESKTOP-LCT9RP5;Database=янтарная комната;Trusted_Connection=yes;')
         self.__cursor = self.__connection_to_db.cursor()
         self.__nationality = self.init_nationality()
+        self.__organisation = self.init_organisation()
+        self.__type_research = self.init_type_research()
         self.__persons = self.init_persons()
         self.__places = self.init_places()
         self.__versions = self.init_versions()
         self.__search_attempts = self.init_search_attempts()
         self.__finds = self.init_finds()
+        self.__type_doc = self.init_type_doc()
         self.__document = self.init_document()
         self.__indication = self.init_indication()
         self.__research = self.init_research()
@@ -162,6 +165,55 @@ class DbController:
 
     def get_research(self):
         return self.__research
+
+    def init_type_doc(self):
+
+        self.__cursor.execute(
+            'SELECT id_тип_документа, тип FROM тип_документа')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        type_doc = map(lambda x: {'id': int(x.id_тип_документа), 'type': x.тип}, row)
+        return list(type_doc)
+
+    def get_type_doc(self):
+        return self.__type_doc
+
+    def init_organisation(self):
+
+        self.__cursor.execute(
+            'SELECT id_организация, организация FROM организация')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        organisation = map(lambda x: {'id': int(x.id_организация), 'organisation': x.организация}, row)
+        return list(organisation)
+
+    def get_organisation(self):
+        return self.__organisation
+
+    def init_type_research(self):
+
+        self.__cursor.execute(
+            'SELECT id_тип_исследования, тип FROM тип_исследования')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        type_research = map(lambda x: {'id': int(x.id_тип_исследования), 'type': x.тип}, row)
+        return list(type_research)
+
+    def get_type_research(self):
+        return self.__type_research
+
 
     def add_person(self, name: str, nationality: int, description: str):
         self.__cursor.execute("INSERT INTO персона (id_персона, ФИО, id_гражданство, описание) "

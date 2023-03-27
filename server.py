@@ -110,8 +110,32 @@ def get_nationality():
     response.status = 200
     return response
 
+@app.route('/getTypeDoc', methods=['GET'])
+def get_type_doc():
+    type_doc = db.get_type_doc()
+    response = jsonify({'type_doc': type_doc})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
 
+@app.route('/getOrganisation', methods=['GET'])
+def get_organisation():
+    organisation = db.get_organisation()
+    response = jsonify({'organisation': organisation})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
 
+@app.route('/getTypeResearch', methods=['GET'])
+def get_type_research():
+    type_research = db.get_type_research()
+    response = jsonify({'type_research': type_research})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.content_type = 'application/json'
+    response.status = 200
+    return response
 
 @app.route('/addPerson', methods=['POST', 'OPTIONS'])
 def add_person():
