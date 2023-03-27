@@ -28,7 +28,7 @@ class DbController:
                 break
             row.append(item)
 
-        #nationality = map(lambda x: {self.__nationality['id']}, self.__nationality)
+        #nationality = map(lambda x: {'id': int(x.id_персона)}, self.__nationality)
         persons = map(lambda x: {'id': int(x.id_персона), 'name': x.ФИО,
                                  'id_nationality': int(x.id_гражданство) ,
                                  'description': x.описание}, row)
