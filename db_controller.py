@@ -4,7 +4,7 @@ import pyodbc
 class DbController:
     def __init__(self):
         self.__connection_to_db = pyodbc.connect(
-            r'Driver={SQL Server};Server=DESKTOP-LCT9RP5;Database=янтарная комната;Trusted_Connection=yes;')
+            r'Driver={SQL Server};Server=DESKTOP-EBLKJFC;Database=янтарная комната;Trusted_Connection=yes;')
         self.__cursor = self.__connection_to_db.cursor()
         self.__nationality = self.init_nationality()
         self.__organisation = self.init_organisation()
@@ -18,6 +18,7 @@ class DbController:
         self.__document = self.init_document()
         self.__indication = self.init_indication()
         self.__research = self.init_research()
+        self.__document_person = self.init_document_person()
 
     def init_persons(self):
         self.__cursor.execute('SELECT id_персона, ФИО, id_гражданство, описание FROM персона')
@@ -28,9 +29,9 @@ class DbController:
                 break
             row.append(item)
 
-        #nationality = map(lambda x: {'id': int(x.id_персона)}, self.__nationality)
+        # nationality = map(lambda x: {'id': int(x.id_персона)}, self.__nationality)
         persons = map(lambda x: {'id': int(x.id_персона), 'name': x.ФИО,
-                                 'id_nationality': int(x.id_гражданство) ,
+                                 'id_nationality': int(x.id_гражданство),
                                  'description': x.описание}, row)
         return list(persons)
 
@@ -214,6 +215,20 @@ class DbController:
     def get_type_research(self):
         return self.__type_research
 
+    def init_document_person(self):
+        self.__cursor.execute(
+            'SELECT id_документ, id_персона FROM документ_персона')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        document_person = map(lambda x: {'id_document': int(x.id_документ), 'id_person': int(x.id_персона)}, row)
+        return list(document_person)
+
+    def get_document_person(self):
+        return self.__document_person
 
     def add_person(self, name: str, nationality: int, description: str):
         self.__cursor.execute("INSERT INTO персона (id_персона, ФИО, id_гражданство, описание) "

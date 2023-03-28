@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, Response, request, make_response
-from werkzeug.exceptions import HTTPException
 import db_controller
 
 app = Flask(__name__)
@@ -38,6 +37,7 @@ def get_persons():
     response.status = 200
     return response
 
+
 @app.route('/getPlaces', methods=['GET'])
 def get_places():
     places = db.get_places()
@@ -46,6 +46,7 @@ def get_places():
     response.content_type = 'application/json'
     response.status = 200
     return response
+
 
 @app.route('/getVersions', methods=['GET'])
 def get_versions():
@@ -56,6 +57,7 @@ def get_versions():
     response.status = 200
     return response
 
+
 @app.route('/getSearchAtt', methods=['GET'])
 def get_search_attempts():
     search_attempts = db.get_search_attempts()
@@ -64,6 +66,7 @@ def get_search_attempts():
     response.content_type = 'application/json'
     response.status = 200
     return response
+
 
 @app.route('/getFinds', methods=['GET'])
 def get_finds():
@@ -74,6 +77,7 @@ def get_finds():
     response.status = 200
     return response
 
+
 @app.route('/getDocument', methods=['GET'])
 def get_document():
     document = db.get_document()
@@ -82,6 +86,7 @@ def get_document():
     response.content_type = 'application/json'
     response.status = 200
     return response
+
 
 @app.route('/getIndication', methods=['GET'])
 def get_indication():
@@ -92,6 +97,7 @@ def get_indication():
     response.status = 200
     return response
 
+
 @app.route('/getResearch', methods=['GET'])
 def get_research():
     research = db.get_research()
@@ -100,6 +106,7 @@ def get_research():
     response.content_type = 'application/json'
     response.status = 200
     return response
+
 
 @app.route('/getNationality', methods=['GET'])
 def get_nationality():
@@ -110,6 +117,7 @@ def get_nationality():
     response.status = 200
     return response
 
+
 @app.route('/getTypeDoc', methods=['GET'])
 def get_type_doc():
     type_doc = db.get_type_doc()
@@ -118,6 +126,7 @@ def get_type_doc():
     response.content_type = 'application/json'
     response.status = 200
     return response
+
 
 @app.route('/getOrganisation', methods=['GET'])
 def get_organisation():
@@ -128,6 +137,7 @@ def get_organisation():
     response.status = 200
     return response
 
+
 @app.route('/getTypeResearch', methods=['GET'])
 def get_type_research():
     type_research = db.get_type_research()
@@ -136,6 +146,28 @@ def get_type_research():
     response.content_type = 'application/json'
     response.status = 200
     return response
+
+
+@app.route('/findDoc', methods=['POST', 'OPTIONS'])
+def find_document():
+    if request.method == 'OPTIONS':
+        return build_cors_preflight_response()
+    elif request.method == "POST":
+        data = request.get_json()
+        document_person = db.get_document_person()
+        id_documents = []
+        for item in document_person:
+            if item['id_person'] == data['id_person']:
+                id_documents.append(item['id_document'])
+        documents = list(filter(lambda x: x['id'] in id_documents, db.get_document()))
+        response = jsonify({'documents': documents})
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.content_type = 'application/json'
+        response.status = 200
+        if len(id_documents) == 0:
+            response.status = 404
+        return response
+
 
 @app.route('/addPerson', methods=['POST', 'OPTIONS'])
 def add_person():
