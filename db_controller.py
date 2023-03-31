@@ -4,7 +4,7 @@ import pyodbc
 class DbController:
     def __init__(self):
         self.__connection_to_db = pyodbc.connect(
-            r'Driver={SQL Server};Server=DESKTOP-EBLKJFC;Database=янтарная комната;Trusted_Connection=yes;')
+            r'Driver={SQL Server};Server=DESKTOP-LCT9RP5;Database=янтарная комната;Trusted_Connection=yes;')
         self.__cursor = self.__connection_to_db.cursor()
         self.__nationality = self.init_nationality()
         self.__organisation = self.init_organisation()
@@ -83,7 +83,7 @@ class DbController:
 
     def init_search_attempts(self):
 
-        self.__cursor.execute('SELECT id_попытка_поиска, id_версия, дата_начала, дата_окончания FROM попытка_поиска')
+        self.__cursor.execute('SELECT id_попытка_поиска, id_версия, дата_начала, дата_окончания, описание FROM попытка_поиска')
         row = []
         while 1:
             item = self.__cursor.fetchone()
@@ -92,7 +92,7 @@ class DbController:
             row.append(item)
         search_att = map(
             lambda x: {'id': int(x.id_попытка_поиска), 'id_versions': int(x.id_версия), 'date_start': x.дата_начала,
-                       'date_finish': x.дата_окончания}, row)
+                       'date_finish': x.дата_окончания, 'description': x.описание}, row)
         return list(search_att)
 
     def get_search_attempts(self):
@@ -100,14 +100,14 @@ class DbController:
 
     def init_finds(self):
 
-        self.__cursor.execute('SELECT id_находки, находка, дата_создания, id_попытка_поиска, описание FROM находки')
+        self.__cursor.execute('SELECT id_находки, находка, id_попытка_поиска, описание FROM находки')
         row = []
         while 1:
             item = self.__cursor.fetchone()
             if not item:
                 break
             row.append(item)
-        find = map(lambda x: {'id': int(x.id_находки), 'name': x.находка, 'date': x.дата_создания,
+        find = map(lambda x: {'id': int(x.id_находки), 'name': x.находка,
                               'id_search_attempts': int(x.id_попытка_поиска), 'description': x.описание}, row)
         return list(find)
 
@@ -151,7 +151,7 @@ class DbController:
     def init_research(self):
 
         self.__cursor.execute(
-            'SELECT id_исследование, id_организация, id_попытка_поиска, описание, id_тип_исследования, локальное_место FROM исследование')
+            'SELECT id_исследование, id_организация, id_попытка_поиска, описание, id_тип_исследования, локальное_место, техника FROM исследование')
         row = []
         while 1:
             item = self.__cursor.fetchone()
@@ -161,7 +161,7 @@ class DbController:
         research = map(lambda x: {'id': int(x.id_исследование), 'id_organization': x.id_организация,
                                   'id_search_attempts': x.id_попытка_поиска,
                                   'description': x.описание, 'id_type_research': int(x.id_тип_исследования),
-                                  'local_place': x.локальное_место}, row)
+                                  'local_place': x.локальное_место, 'tecnique': x.техника}, row)
         return list(research)
 
     def get_research(self):
