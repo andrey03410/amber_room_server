@@ -243,7 +243,29 @@ class DbController:
         return list(row)
 
     def add_person(self, name: str, nationality: int, description: str):
+
+        id_max = -1
+
+        for i in self.__persons:
+            if(i['id'] > id_max):
+                id_max = i['id']
+
+        id_max += 1
+        id =id_max
+        indexx = [-1]*id_max
+
+
+        for i in self.__persons:
+            indexx[i['id']] = i['id']
+            print(indexx[i['id']])
+
+        for i in range(1, id_max):
+            if indexx[i] == -1:
+                id = i
+                break
+
+
         self.__cursor.execute("INSERT INTO персона (id_персона, ФИО, id_гражданство, описание) "
-                              "VALUES (?, ?, ?, ?)", len(self.__persons) + 1, name, nationality, description)
+                              "VALUES (?, ?, ?, ?)", id, name, nationality, description)
         self.__connection_to_db.commit()
         self.__persons = self.init_persons()
