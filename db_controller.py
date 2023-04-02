@@ -257,7 +257,7 @@ class DbController:
 
         for i in self.__persons:
             indexx[i['id']] = i['id']
-            print(indexx[i['id']])
+
 
         for i in range(1, id_max):
             if indexx[i] == -1:
