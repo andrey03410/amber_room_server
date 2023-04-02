@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, Response, request, make_response
+from flask import Flask, jsonify, Response, request, make_response, send_file
 import db_controller
 
 app = Flask(__name__)
@@ -167,6 +167,11 @@ def find_document():
         if len(id_documents) == 0:
             response.status = 404
         return response
+
+
+@app.route('/getImage', methods=['GET'])
+def get_image():
+    return send_file('images/Integral.jpg', mimetype='image/jpeg')
 
 
 @app.route('/addPerson', methods=['POST', 'OPTIONS'])

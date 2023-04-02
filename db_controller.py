@@ -1,10 +1,10 @@
 import pyodbc
+import settings
 
 
 class DbController:
     def __init__(self):
-        self.__connection_to_db = pyodbc.connect(
-            r'Driver={SQL Server};Server=DESKTOP-LCT9RP5;Database=янтарная комната;Trusted_Connection=yes;')
+        self.__connection_to_db = pyodbc.connect(settings.DATABASE_CONNECTION)
         self.__cursor = self.__connection_to_db.cursor()
         self.__nationality = self.init_nationality()
         self.__organisation = self.init_organisation()
@@ -83,7 +83,8 @@ class DbController:
 
     def init_search_attempts(self):
 
-        self.__cursor.execute('SELECT id_попытка_поиска, id_версия, дата_начала, дата_окончания, описание FROM попытка_поиска')
+        self.__cursor.execute(
+            'SELECT id_попытка_поиска, id_версия, дата_начала, дата_окончания, описание FROM попытка_поиска')
         row = []
         while 1:
             item = self.__cursor.fetchone()
@@ -229,6 +230,17 @@ class DbController:
 
     def get_document_person(self):
         return self.__document_person
+
+    def get_image(self):
+        self.__cursor.execute('SELECT TOP (3) фото FROM фото')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        row = map(str, row)
+        return list(row)
 
     def add_person(self, name: str, nationality: int, description: str):
         self.__cursor.execute("INSERT INTO персона (id_персона, ФИО, id_гражданство, описание) "
