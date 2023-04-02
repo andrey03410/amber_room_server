@@ -1,6 +1,6 @@
 import pyodbc
 import settings
-
+from datetime import datetime
 
 class DbController:
     def __init__(self):
@@ -162,7 +162,7 @@ class DbController:
         research = map(lambda x: {'id': int(x.id_исследование), 'id_organization': x.id_организация,
                                   'id_search_attempts': x.id_попытка_поиска,
                                   'description': x.описание, 'id_type_research': int(x.id_тип_исследования),
-                                  'local_place': x.локальное_место, 'tecnique': x.техника}, row)
+                                  'local_place': x.локальное_место, 'technique': x.техника}, row)
         return list(research)
 
     def get_research(self):
@@ -242,30 +242,73 @@ class DbController:
         row = map(str, row)
         return list(row)
 
-    def add_person(self, name: str, nationality: int, description: str):
-
+    def get_free_id(self, a):
         id_max = -1
 
-        for i in self.__persons:
-            if(i['id'] > id_max):
+        for i in a:
+            if (i['id'] > id_max):
                 id_max = i['id']
 
         id_max += 1
-        id =id_max
-        indexx = [-1]*id_max
+        id = id_max
+        indexx = [-1] * id_max
 
-
-        for i in self.__persons:
+        for i in a:
             indexx[i['id']] = i['id']
-
 
         for i in range(1, id_max):
             if indexx[i] == -1:
                 id = i
                 break
+        return id
+
+    def add_person(self, name: str, nationality: int, description: str):
 
 
         self.__cursor.execute("INSERT INTO персона (id_персона, ФИО, id_гражданство, описание) "
-                              "VALUES (?, ?, ?, ?)", id, name, nationality, description)
+                              "VALUES (?, ?, ?, ?)", self.get_free_id(self.__persons), name, nationality, description)
         self.__connection_to_db.commit()
         self.__persons = self.init_persons()
+
+
+    def add_place(self, name: str, description: str):
+
+
+        self.__cursor.execute("INSERT INTO место (id_места, место, описание) "
+                              "VALUES (?, ?, ?)", self.get_free_id(self.__places), name, description)
+        self.__connection_to_db.commit()
+        self.__places = self.init_places()
+
+
+    def add_version(self, id_places: int, description: str):
+
+
+        self.__cursor.execute("INSERT INTO версия (id_версии, id_место, описание) "
+                              "VALUES (?, ?, ?)", self.get_free_id(self.__versions), id_places, description)
+        self.__connection_to_db.commit()
+        self.__versions = self.init_versions()
+
+    def add_search_attempts(self, id_versions: int, date_start: datetime, date_finish: datetime, description: str):
+
+
+        self.__cursor.execute("INSERT INTO попытка_поиска (id_попытка_поиска, id_версия, дата_начала, дата_окончания, описание) "
+                              "VALUES (?, ?, ?, ?, ?)", self.get_free_id(self.__search_attempts),id_versions, date_start, date_finish, description)
+        self.__connection_to_db.commit()
+        self.__search_attempts = self.init_search_attempts()
+
+    def add_finds(self, name: str, id_search_attempts: int, description: str):
+
+
+        self.__cursor.execute("INSERT INTO находки (id_находки, находка, id_попытка_поиска, описание) "
+                              "VALUES (?, ?, ?, ?)", self.get_free_id(self.__finds), name, id_search_attempts, description)
+        self.__connection_to_db.commit()
+        self.__finds = self.init_finds()
+
+    def add_researches(self, id_organization: int, id_search_attempts: int, description: str,  id_type_research: int,  local_place: str,  technique: str):
+
+        self.__cursor.execute("INSERT INTO исследование (id_исследование, id_организация, id_попытка_поиска, описание, id_тип_исследования, локальное_место, техника) "
+                              "VALUES (?, ?, ?, ?, ?, ?, ?)", self.get_free_id(self.__research), id_organization, id_search_attempts,
+                              description, id_type_research, local_place, technique)
+        self.__connection_to_db.commit()
+        self.__research = self.init_research()
+

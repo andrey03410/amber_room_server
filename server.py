@@ -184,5 +184,55 @@ def add_person():
         return empty_response(200)
 
 
+@app.route('/addPlace', methods=['POST', 'OPTIONS'])
+def add_place():
+    if request.method == 'OPTIONS':
+        return build_cors_preflight_response()
+    elif request.method == "POST":
+        data = request.get_json()
+        db.add_place(data['name'], data['description'])
+        return empty_response(200)
+
+@app.route('/addVersion', methods=['POST', 'OPTIONS'])
+def add_version():
+    if request.method == 'OPTIONS':
+        return build_cors_preflight_response()
+    elif request.method == "POST":
+        data = request.get_json()
+        db.add_version(data['id_places'], data['description'])
+        return empty_response(200)
+
+
+@app.route('/addSearchAttempt', methods=['POST', 'OPTIONS'])
+def add_search_attempts():
+    if request.method == 'OPTIONS':
+        return build_cors_preflight_response()
+    elif request.method == "POST":
+        data = request.get_json()
+        db.add_search_attempts(data['id_versions'], data['date_start'], data['date_finish'], data['description'])
+        return empty_response(200)
+
+@app.route('/addFinds', methods=['POST', 'OPTIONS'])
+def add_finds():
+    if request.method == 'OPTIONS':
+        return build_cors_preflight_response()
+    elif request.method == "POST":
+        data = request.get_json()
+        db.add_finds(data['name'], data['id_search_attempts'], data['description'])
+        return empty_response(200)
+
+@app.route('/addResearches', methods=['POST', 'OPTIONS'])
+def add_researches():
+    if request.method == 'OPTIONS':
+        return build_cors_preflight_response()
+    elif request.method == "POST":
+        data = request.get_json()
+        db.add_researches(data['id_organization'], data['id_search_attempts'], data['description'], data['id_type_research'], data['local_place'], data['technique'])
+        return empty_response(200)
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+
