@@ -169,9 +169,9 @@ def find_document():
         return response
 
 
-@app.route('/getImage', methods=['GET'])
-def get_image():
-    return send_file('images/Integral.jpg', mimetype='image/jpeg')
+@app.route('/getImage<id>', methods=['GET'])
+def get_image(id):
+    return send_file('images/' + str(id) + '.jpg', mimetype='image/jpeg')
 
 
 @app.route('/addPerson', methods=['POST', 'OPTIONS'])
