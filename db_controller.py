@@ -2,6 +2,7 @@ import pyodbc
 import settings
 from datetime import datetime
 
+
 class DbController:
     def __init__(self):
         self.__connection_to_db = pyodbc.connect(settings.DATABASE_CONNECTION)
@@ -28,8 +29,6 @@ class DbController:
             if not item:
                 break
             row.append(item)
-
-        # nationality = map(lambda x: {'id': int(x.id_персона)}, self.__nationality)
         persons = map(lambda x: {'id': int(x.id_персона), 'name': x.ФИО,
                                  'id_nationality': int(x.id_гражданство),
                                  'description': x.описание}, row)
@@ -246,7 +245,7 @@ class DbController:
         id_max = -1
 
         for i in a:
-            if (i['id'] > id_max):
+            if i['id'] > id_max:
                 id_max = i['id']
 
         id_max += 1
@@ -264,24 +263,19 @@ class DbController:
 
     def add_person(self, name: str, nationality: int, description: str):
 
-
         self.__cursor.execute("INSERT INTO персона (id_персона, ФИО, id_гражданство, описание) "
                               "VALUES (?, ?, ?, ?)", self.get_free_id(self.__persons), name, nationality, description)
         self.__connection_to_db.commit()
         self.__persons = self.init_persons()
 
-
     def add_place(self, name: str, description: str):
-
 
         self.__cursor.execute("INSERT INTO место (id_места, место, описание) "
                               "VALUES (?, ?, ?)", self.get_free_id(self.__places), name, description)
         self.__connection_to_db.commit()
         self.__places = self.init_places()
 
-
     def add_version(self, id_places: int, description: str):
-
 
         self.__cursor.execute("INSERT INTO версия (id_версии, id_место, описание) "
                               "VALUES (?, ?, ?)", self.get_free_id(self.__versions), id_places, description)
@@ -290,25 +284,27 @@ class DbController:
 
     def add_search_attempts(self, id_versions: int, date_start: datetime, date_finish: datetime, description: str):
 
-
-        self.__cursor.execute("INSERT INTO попытка_поиска (id_попытка_поиска, id_версия, дата_начала, дата_окончания, описание) "
-                              "VALUES (?, ?, ?, ?, ?)", self.get_free_id(self.__search_attempts),id_versions, date_start, date_finish, description)
+        self.__cursor.execute(
+            "INSERT INTO попытка_поиска (id_попытка_поиска, id_версия, дата_начала, дата_окончания, описание) "
+            "VALUES (?, ?, ?, ?, ?)", self.get_free_id(self.__search_attempts), id_versions, date_start, date_finish,
+            description)
         self.__connection_to_db.commit()
         self.__search_attempts = self.init_search_attempts()
 
     def add_finds(self, name: str, id_search_attempts: int, description: str):
 
-
         self.__cursor.execute("INSERT INTO находки (id_находки, находка, id_попытка_поиска, описание) "
-                              "VALUES (?, ?, ?, ?)", self.get_free_id(self.__finds), name, id_search_attempts, description)
+                              "VALUES (?, ?, ?, ?)", self.get_free_id(self.__finds), name, id_search_attempts,
+                              description)
         self.__connection_to_db.commit()
         self.__finds = self.init_finds()
 
-    def add_researches(self, id_organization: int, id_search_attempts: int, description: str,  id_type_research: int,  local_place: str,  technique: str):
+    def add_researches(self, id_organization: int, id_search_attempts: int, description: str, id_type_research: int,
+                       local_place: str, technique: str):
 
-        self.__cursor.execute("INSERT INTO исследование (id_исследование, id_организация, id_попытка_поиска, описание, id_тип_исследования, локальное_место, техника) "
-                              "VALUES (?, ?, ?, ?, ?, ?, ?)", self.get_free_id(self.__research), id_organization, id_search_attempts,
-                              description, id_type_research, local_place, technique)
+        self.__cursor.execute(
+            "INSERT INTO исследование (id_исследование, id_организация, id_попытка_поиска, описание, id_тип_исследования, локальное_место, техника) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)", self.get_free_id(self.__research), id_organization, id_search_attempts,
+            description, id_type_research, local_place, technique)
         self.__connection_to_db.commit()
         self.__research = self.init_research()
-
