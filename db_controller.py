@@ -20,6 +20,7 @@ class DbController:
         self.__indication = self.init_indication()
         self.__research = self.init_research()
         self.__document_person = self.init_document_person()
+        self.__images = self.init_images()
 
     def init_persons(self):
         self.__cursor.execute('SELECT id_персона, ФИО, id_гражданство, описание FROM персона')
@@ -230,16 +231,21 @@ class DbController:
     def get_document_person(self):
         return self.__document_person
 
-    def get_image(self):
-        self.__cursor.execute('SELECT TOP (3) фото FROM фото')
+    def init_images(self):
+        self.__cursor.execute(
+            'SELECT id_фото, описание, id_документ, путь FROM фото')
         row = []
         while 1:
             item = self.__cursor.fetchone()
             if not item:
                 break
             row.append(item)
-        row = map(str, row)
-        return list(row)
+        photo = map(lambda x: {'id': int(x.id_фото), 'description': x.описание, 'id_document': int(x.id_документ),
+                               'path': x.путь}, row)
+        return list(photo)
+
+    def get_images(self):
+        return self.__images
 
     def get_free_id(self, a):
         id_max = -1

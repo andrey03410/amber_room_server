@@ -169,24 +169,35 @@ def find_document():
         return response
 
 
-@app.route('/findImagesId', methods=['POST', 'OPTIONS'])
+@app.route('/findImages', methods=['POST', 'OPTIONS'])
 def find_images_id():
     if request.method == 'OPTIONS':
         return build_cors_preflight_response()
     elif request.method == "POST":
-        id_images = [4, 5, 6, 7, 10]
-        response = jsonify({'id_images': id_images})
+        data = request.get_json()
+        images = db.get_images()
+        searched_images = []
+        for item in images:
+            if item['id_document'] == data['id_document']:
+                searched_images.append({'id_image': int(item['id']), 'description': item['description']})
+        response = jsonify({'images': searched_images})
         response.headers['Access-Control-Allow-Origin'] = '*'
         response.content_type = 'application/json'
         response.status = 200
-        if len(id_images) == 0:
+        if len(searched_images) == 0:
             response.status = 404
         return response
 
 
 @app.route('/getImage<id>', methods=['GET'])
 def get_image(id):
-    return send_file('images/' + str(id) + '.jpg', mimetype='image/jpeg')
+    images = db.get_images()
+    path = ''
+    for item in images:
+        if item['id'] == int(id):
+            path = item['path']
+            break
+    return send_file(path, mimetype='image/jpeg')
 
 
 @app.route('/addPerson', methods=['POST', 'OPTIONS'])
