@@ -65,14 +65,14 @@ class DbController:
         return self.__persons
 
     def init_places(self):
-        self.__cursor.execute('SELECT id_места, место, описание FROM место')
+        self.__cursor.execute('SELECT id_места, место, описание, координата_х, координата_у FROM место')
         row = []
         while 1:
             item = self.__cursor.fetchone()
             if not item:
                 break
             row.append(item)
-        places = map(lambda x: {'id': int(x.id_места), 'name': x.место, 'description': x.описание}, row)
+        places = map(lambda x: {'id': int(x.id_места), 'name': x.место, 'description': x.описание, 'coord_x': x.координата_х, 'coord_y': x.координата_у}, row)
         return list(places)
 
     def init_nationality(self):
@@ -302,8 +302,8 @@ class DbController:
 
     def add_place(self, name: str, description: str):
 
-        self.__cursor.execute("INSERT INTO место (id_места, место, описание) "
-                              "VALUES (?, ?, ?)", self.get_free_id(self.__places), name, description)
+        self.__cursor.execute("INSERT INTO место (id_места, место, описание, координата_х, координата_у) "
+                              "VALUES (?, ?, ?, ?, ?)", self.get_free_id(self.__places), name, description, 0, 0)
         self.__connection_to_db.commit()
         self.__places = self.init_places()
 
