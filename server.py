@@ -269,7 +269,6 @@ def add_indications():
         data = request.get_json()
         db.add_indications(data['id_persons'], data['testimony'], data['id_versions'],
                           data['date'], data['id_documents'])
-        db.add_documents_indications()
         return empty_response(200)
 
 

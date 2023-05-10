@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b91b4380-1897-4e34-8a73-dce883bc3823" name="Default Changelist" comment="add indexing">
+    <list default="true" id="b91b4380-1897-4e34-8a73-dce883bc3823" name="Default Changelist" comment="add data and post indication">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/db_controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
@@ -169,7 +169,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680467908199</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="add data and post indication">
+      <created>1683716255145</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1683716255145</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -189,6 +196,7 @@
     <MESSAGE value="commit get select" />
     <MESSAGE value="edit back" />
     <MESSAGE value="add indexing" />
-    <option name="LAST_COMMIT_MESSAGE" value="add indexing" />
+    <MESSAGE value="add data and post indication" />
+    <option name="LAST_COMMIT_MESSAGE" value="add data and post indication" />
   </component>
 </project>

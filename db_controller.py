@@ -328,18 +328,24 @@ class DbController:
         self.__connection_to_db.commit()
         self.__research = self.init_research()
 
-    def add_indications(self, id_persons: int, testimony: str, id_versions: int, date: str, id_documents: int):
+    def add_indications(self, id_persons: int, testimony: str, id_versions: int, date: str, id_documents: list):
+        id_indications = self.get_free_id(self.__indication)
         self.__cursor.execute(
             "INSERT INTO показание (id_показание, id_персона, показание, id_версия, дата) "
-            "VALUES (?, ?, ?, ?, ?)", self.get_free_id(self.__indication), id_persons, testimony,
+            "VALUES (?, ?, ?, ?, ?)", id_indications, id_persons, testimony,
             id_versions, date)
         self.__connection_to_db.commit()
         self.__indication = self.init_indication()
-        self.__cursor.execute(
-            "INSERT INTO документ_показание (id_документ, id_показание) "
-            "VALUES (?, ?)", id_documents, id_indications)
-        self.__connection_to_db.commit()
-        self.__document_indications = self.init_document_indications()
+
+        for i in range(len(id_documents)):
+            self.__cursor.execute(
+                "INSERT INTO документ_показание (id_документ, id_показание) "
+                "VALUES (?, ?)", id_documents[i], id_indications)
+            self.__connection_to_db.commit()
+            self.__document_indications = self.init_document_indications()
+
+
+
 
 
 
