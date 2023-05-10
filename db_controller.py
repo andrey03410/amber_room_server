@@ -20,6 +20,7 @@ class DbController:
         self.__indication = self.init_indication()
         self.__research = self.init_research()
         self.__document_person = self.init_document_person()
+        self.__document_author = self.init_document_author()
         self.__document_indications = self.init_document_indications()
         self.__images = self.init_images()
 
@@ -47,6 +48,18 @@ class DbController:
         persons = map(lambda x: {'id_document': int(x.id_документ),
                                  'id_indications': int(x.id_показание)}, row)
         return list(persons)
+
+    def init_document_author(self):
+        self.__cursor.execute('SELECT id_документ, id_автор FROM документ_автор')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        document_author = map(lambda x: {'id_document': int(x.id_документ),
+                                 'id_author': int(x.id_автор)}, row)
+        return list(document_author)
 
     def get_persons(self):
         return self.__persons
@@ -344,6 +357,30 @@ class DbController:
             self.__connection_to_db.commit()
             self.__document_indications = self.init_document_indications()
 
+
+    def add_document(self, id_type_doc: int, id_search_attempts: int, date: str, description: str, id_author: list,
+                     id_person: list, imageDesc: list, images: list):
+        id_documents = self.get_free_id(self.__document)
+        self.__cursor.execute(
+            "INSERT INTO документ (id_документ, id_тип_документа, id_попытка_поиска, дата, описание) "
+            "VALUES (?, ?, ?, ?, ?)", id_documents, id_type_doc, id_search_attempts,
+            date, description)
+        self.__connection_to_db.commit()
+        self.__document = self.init_document()
+
+        for i in range(len(id_author)):
+            self.__cursor.execute(
+                "INSERT INTO документ_автор (id_документ, id_автор) "
+                "VALUES (?, ?)", id_documents, id_author[i])
+            self.__connection_to_db.commit()
+            self.__document_author = self.init_document_author()
+
+        for i in range(len(id_person)):
+            self.__cursor.execute(
+                "INSERT INTO документ_персона (id_документ, id_персона) "
+                "VALUES (?, ?)", id_documents, id_person[i])
+            self.__connection_to_db.commit()
+            self.__document_person = self.init_document_person()
 
 
 
