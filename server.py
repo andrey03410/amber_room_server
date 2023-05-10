@@ -261,5 +261,17 @@ def add_researches():
         return empty_response(200)
 
 
+@app.route('/addIndications', methods=['POST', 'OPTIONS'])
+def add_indications():
+    if request.method == 'OPTIONS':
+        return build_cors_preflight_response()
+    elif request.method == "POST":
+        data = request.get_json()
+        db.add_indications(data['id_persons'], data['testimony'], data['id_versions'],
+                          data['date'], data['id_documents'])
+        db.add_documents_indications()
+        return empty_response(200)
+
+
 if __name__ == '__main__':
     app.run(debug=True)

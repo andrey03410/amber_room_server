@@ -20,6 +20,7 @@ class DbController:
         self.__indication = self.init_indication()
         self.__research = self.init_research()
         self.__document_person = self.init_document_person()
+        self.__document_indications = self.init_document_indications()
         self.__images = self.init_images()
 
     def init_persons(self):
@@ -33,6 +34,18 @@ class DbController:
         persons = map(lambda x: {'id': int(x.id_персона), 'name': x.ФИО,
                                  'id_nationality': int(x.id_гражданство),
                                  'description': x.описание}, row)
+        return list(persons)
+
+    def init_document_indications(self):
+        self.__cursor.execute('SELECT id_документ, id_показание FROM документ_показание')
+        row = []
+        while 1:
+            item = self.__cursor.fetchone()
+            if not item:
+                break
+            row.append(item)
+        persons = map(lambda x: {'id_document': int(x.id_документ),
+                                 'id_indications': int(x.id_показание)}, row)
         return list(persons)
 
     def get_persons(self):
@@ -84,7 +97,7 @@ class DbController:
     def init_search_attempts(self):
 
         self.__cursor.execute(
-            'SELECT id_попытка_поиска, id_версия, дата_начала, дата_окончания, описание FROM попытка_поиска')
+            'SELECT id_попытка_поиска, id_версия, описание, дата_начала, дата_окончания FROM попытка_поиска')
         row = []
         while 1:
             item = self.__cursor.fetchone()
@@ -92,8 +105,8 @@ class DbController:
                 break
             row.append(item)
         search_att = map(
-            lambda x: {'id': int(x.id_попытка_поиска), 'id_versions': int(x.id_версия), 'date_start': x.дата_начала,
-                       'date_finish': x.дата_окончания, 'description': x.описание}, row)
+            lambda x: {'id': int(x.id_попытка_поиска), 'id_versions': int(x.id_версия), 'description': x.описание, 'date_start': x.дата_начала,
+                       'date_finish': x.дата_окончания}, row)
         return list(search_att)
 
     def get_search_attempts(self):
@@ -288,12 +301,12 @@ class DbController:
         self.__connection_to_db.commit()
         self.__versions = self.init_versions()
 
-    def add_search_attempts(self, id_versions: int, date_start: datetime, date_finish: datetime, description: str):
+    def add_search_attempts(self, id_versions: int, date_start: str, date_finish: str, description: str):
 
         self.__cursor.execute(
-            "INSERT INTO попытка_поиска (id_попытка_поиска, id_версия, дата_начала, дата_окончания, описание) "
-            "VALUES (?, ?, ?, ?, ?)", self.get_free_id(self.__search_attempts), id_versions, date_start, date_finish,
-            description)
+            "INSERT INTO попытка_поиска (id_попытка_поиска, id_версия, описание, дата_начала, дата_окончания) "
+            "VALUES (?, ?, ?, ?, ?)", self.get_free_id(self.__search_attempts), id_versions,
+            description, date_start, date_finish)
         self.__connection_to_db.commit()
         self.__search_attempts = self.init_search_attempts()
 
@@ -314,3 +327,20 @@ class DbController:
             description, id_type_research, local_place, technique)
         self.__connection_to_db.commit()
         self.__research = self.init_research()
+
+    def add_indications(self, id_persons: int, testimony: str, id_versions: int, date: str, id_documents: int):
+        self.__cursor.execute(
+            "INSERT INTO показание (id_показание, id_персона, показание, id_версия, дата) "
+            "VALUES (?, ?, ?, ?, ?)", self.get_free_id(self.__indication), id_persons, testimony,
+            id_versions, date)
+        self.__connection_to_db.commit()
+        self.__indication = self.init_indication()
+        self.__cursor.execute(
+            "INSERT INTO документ_показание (id_документ, id_показание) "
+            "VALUES (?, ?)", id_documents, id_indications)
+        self.__connection_to_db.commit()
+        self.__document_indications = self.init_document_indications()
+
+
+
+
