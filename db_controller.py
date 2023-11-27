@@ -1,11 +1,13 @@
 import pyodbc
-import settings
-from datetime import datetime
+import configparser
 
 
 class DbController:
     def __init__(self):
-        self.__connection_to_db = pyodbc.connect(settings.DATABASE_CONNECTION)
+        config = configparser.ConfigParser()
+        config.read('settings.ini', encoding="utf-8")
+        path = config["section1"]["DATABASE_CONNECTION"]
+        self.__connection_to_db = pyodbc.connect(path)
         self.__cursor = self.__connection_to_db.cursor()
         self.__nationality = self.init_nationality()
         self.__organisation = self.init_organisation()

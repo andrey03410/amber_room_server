@@ -268,7 +268,7 @@ def add_indications():
     elif request.method == "POST":
         data = request.get_json()
         db.add_indications(data['id_persons'], data['testimony'], data['id_versions'],
-                          data['date'], data['id_documents'])
+                           data['date'], data['id_documents'])
         return empty_response(200)
 
 
@@ -279,8 +279,9 @@ def add_document():
     elif request.method == "POST":
         data = request.get_json()
         db.add_document(data['id_type_doc'], data['id_search_attempts'], data['date'],
-                          data['description'], data['id_author'], data['id_person'], data['imageDesc'], data['images'])
+                        data['description'], data['id_author'], data['id_person'], data['imageDesc'], data['images'])
         return empty_response(200)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
