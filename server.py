@@ -1,7 +1,12 @@
-from flask import Flask, jsonify, Response, request, make_response, send_file
+from flask import Flask, jsonify, Response, request, make_response, send_file, flash
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
 import db_controller
+import os
+import json
 
 app = Flask(__name__)
+CORS(app)
 db = db_controller.DbController()
 
 
@@ -197,7 +202,7 @@ def get_image(id):
         if item['id'] == int(id):
             path = item['path']
             break
-    return send_file(path, mimetype='image/jpeg')
+    return send_file('docs/49.pdf', mimetype='image/pdf')
 
 
 @app.route('/addPerson', methods=['POST', 'OPTIONS'])
@@ -272,16 +277,28 @@ def add_indications():
         return empty_response(200)
 
 
-@app.route('/addDocument', methods=['POST', 'OPTIONS'])
+@app.route('/addDocument', methods=['POST'])
 def add_document():
-    if request.method == 'OPTIONS':
-        return build_cors_preflight_response()
-    elif request.method == "POST":
-        data = request.get_json()
-        db.add_document(data['id_type_doc'], data['id_search_attempts'], data['date'],
-                        data['description'], data['id_author'], data['id_person'], data['imageDesc'], data['images'])
+    if 'file' not in request.files:
+        return empty_response(400)
+    file = request.files['file']
+    form = json.loads(request.form['data'])
+    if file:
+        count = db.get_document_amount() + 1
+        while True:
+            filename = str(count + 1) + '.pdf'
+            if os.path.isfile(app.config['UPLOAD_FOLDER'] + '/' + str(count + 1) + '.pdf'):
+                count += 1
+            else:
+                break
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        db.add_document(form['id_type_doc'], form['id_search_attempts'], form['date'], form['description'],
+                        form['id_author'], form['id_person'], filename)
         return empty_response(200)
+    else:
+        return empty_response(400)
 
 
 if __name__ == '__main__':
+    app.config['UPLOAD_FOLDER'] = 'docs/'
     app.run(debug=True)

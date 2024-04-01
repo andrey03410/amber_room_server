@@ -60,7 +60,7 @@ class DbController:
                 break
             row.append(item)
         document_author = map(lambda x: {'id_document': int(x.id_документ),
-                                 'id_author': int(x.id_автор)}, row)
+                                         'id_author': int(x.id_автор)}, row)
         return list(document_author)
 
     def get_persons(self):
@@ -74,7 +74,9 @@ class DbController:
             if not item:
                 break
             row.append(item)
-        places = map(lambda x: {'id': int(x.id_места), 'name': x.место, 'description': x.описание, 'coord_x': x.координата_х, 'coord_y': x.координата_у}, row)
+        places = map(
+            lambda x: {'id': int(x.id_места), 'name': x.место, 'description': x.описание, 'coord_x': x.координата_х,
+                       'coord_y': x.координата_у}, row)
         return list(places)
 
     def init_nationality(self):
@@ -120,7 +122,8 @@ class DbController:
                 break
             row.append(item)
         search_att = map(
-            lambda x: {'id': int(x.id_попытка_поиска), 'id_versions': int(x.id_версия), 'description': x.описание, 'date_start': x.дата_начала,
+            lambda x: {'id': int(x.id_попытка_поиска), 'id_versions': int(x.id_версия), 'description': x.описание,
+                       'date_start': x.дата_начала,
                        'date_finish': x.дата_окончания}, row)
         return list(search_att)
 
@@ -359,14 +362,13 @@ class DbController:
             self.__connection_to_db.commit()
             self.__document_indications = self.init_document_indications()
 
-
     def add_document(self, id_type_doc: int, id_search_attempts: int, date: str, description: str, id_author: list,
-                     id_person: list, imageDesc: list, images: list):
+                     id_person: list, path: str):
         id_documents = self.get_free_id(self.__document)
         self.__cursor.execute(
-            "INSERT INTO документ (id_документ, id_тип_документа, id_попытка_поиска, дата, описание) "
-            "VALUES (?, ?, ?, ?, ?)", id_documents, id_type_doc, id_search_attempts,
-            date, description)
+            "INSERT INTO документ (id_документ, id_тип_документа, id_попытка_поиска, дата, описание, путь) "
+            "VALUES (?, ?, ?, ?, ?, ?)", id_documents, id_type_doc, id_search_attempts,
+            date, description, path)
         self.__connection_to_db.commit()
         self.__document = self.init_document()
 
@@ -384,8 +386,7 @@ class DbController:
             self.__connection_to_db.commit()
             self.__document_person = self.init_document_person()
 
+        self.__document = self.init_document()
 
-
-
-
-
+    def get_document_amount(self):
+        return len(self.__document)
