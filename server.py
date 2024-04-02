@@ -272,7 +272,7 @@ def add_document():
                 break
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         db.add_document(form['id_type_doc'], form['id_search_attempts'], form['date'], form['description'],
-                        form['id_author'], form['id_person'], filename)
+                        form['id_author'], form['id_person'], 'docs/' + filename)
         return empty_response(200)
     else:
         return empty_response(400)
