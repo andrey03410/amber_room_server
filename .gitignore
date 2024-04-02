@@ -156,3 +156,4 @@ cython_debug/
 settings.py
 images
 settings.ini
+docs

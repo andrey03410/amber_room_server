@@ -1,6 +1,5 @@
-from flask import Flask, jsonify, Response, request, make_response, send_file, flash
+from flask import Flask, jsonify, Response, request, make_response, send_file
 from flask_cors import CORS
-from werkzeug.utils import secure_filename
 import db_controller
 import os
 import json
@@ -174,35 +173,15 @@ def find_document():
         return response
 
 
-@app.route('/findImages', methods=['POST', 'OPTIONS'])
-def find_images_id():
-    if request.method == 'OPTIONS':
-        return build_cors_preflight_response()
-    elif request.method == "POST":
-        data = request.get_json()
-        images = db.get_images()
-        searched_images = []
-        for item in images:
-            if item['id_document'] == data['id_document']:
-                searched_images.append({'id_image': int(item['id']), 'description': item['description']})
-        response = jsonify({'images': searched_images})
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.content_type = 'application/json'
-        response.status = 200
-        if len(searched_images) == 0:
-            response.status = 404
-        return response
-
-
 @app.route('/getImage<id>', methods=['GET'])
 def get_image(id):
-    images = db.get_images()
+    documents = db.get_document()
     path = ''
-    for item in images:
+    for item in documents:
         if item['id'] == int(id):
             path = item['path']
             break
-    return send_file('docs/49.pdf', mimetype='image/pdf')
+    return send_file(path, mimetype='image/pdf')
 
 
 @app.route('/addPerson', methods=['POST', 'OPTIONS'])
@@ -286,8 +265,8 @@ def add_document():
     if file:
         count = db.get_document_amount() + 1
         while True:
-            filename = str(count + 1) + '.pdf'
-            if os.path.isfile(app.config['UPLOAD_FOLDER'] + '/' + str(count + 1) + '.pdf'):
+            filename = str(count) + '.pdf'
+            if os.path.isfile(app.config['UPLOAD_FOLDER'] + '/' + str(count) + '.pdf'):
                 count += 1
             else:
                 break

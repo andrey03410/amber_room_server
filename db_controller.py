@@ -148,7 +148,8 @@ class DbController:
 
     def init_document(self):
 
-        self.__cursor.execute('SELECT id_документ, id_тип_документа, id_попытка_поиска, дата, описание FROM документ')
+        self.__cursor.execute(
+            'SELECT id_документ, id_тип_документа, id_попытка_поиска, дата, описание, путь FROM документ')
         row = []
         while 1:
             item = self.__cursor.fetchone()
@@ -157,7 +158,7 @@ class DbController:
             row.append(item)
         document = map(lambda x: {'id': int(x.id_документ), 'id_type_doc': int(x.id_тип_документа),
                                   'id_search_attempts': x.id_попытка_поиска,
-                                  'date': x.дата, 'description': x.описание}, row)
+                                  'date': x.дата, 'description': x.описание, 'path': x.путь}, row)
         return list(document)
 
     def get_document(self):
