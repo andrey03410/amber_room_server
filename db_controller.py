@@ -24,7 +24,6 @@ class DbController:
         self.__document_person = self.init_document_person()
         self.__document_author = self.init_document_author()
         self.__document_indications = self.init_document_indications()
-        self.__images = self.init_images()
 
     def init_persons(self):
         self.__cursor.execute('SELECT id_персона, ФИО, id_гражданство, описание FROM персона')
@@ -263,22 +262,6 @@ class DbController:
     def get_document_person(self):
         return self.__document_person
 
-    def init_images(self):
-        self.__cursor.execute(
-            'SELECT id_фото, описание, id_документ, путь FROM фото')
-        row = []
-        while 1:
-            item = self.__cursor.fetchone()
-            if not item:
-                break
-            row.append(item)
-        photo = map(lambda x: {'id': int(x.id_фото), 'description': x.описание, 'id_document': int(x.id_документ),
-                               'path': x.путь}, row)
-        return list(photo)
-
-    def get_images(self):
-        return self.__images
-
     def get_free_id(self, a):
         id_max = -1
 
@@ -305,6 +288,7 @@ class DbController:
                               "VALUES (?, ?, ?, ?)", self.get_free_id(self.__persons), name, nationality, description)
         self.__connection_to_db.commit()
         self.__persons = self.init_persons()
+        self.init_persons()  # временное решение (в будущем исправить на добавление отдельного элемента без инциализации всей таблицы)
 
     def add_place(self, name: str, description: str):
 
@@ -312,6 +296,7 @@ class DbController:
                               "VALUES (?, ?, ?, ?, ?)", self.get_free_id(self.__places), name, description, 0, 0)
         self.__connection_to_db.commit()
         self.__places = self.init_places()
+        self.init_places()
 
     def add_version(self, id_places: int, description: str):
 
@@ -319,6 +304,7 @@ class DbController:
                               "VALUES (?, ?, ?)", self.get_free_id(self.__versions), id_places, description)
         self.__connection_to_db.commit()
         self.__versions = self.init_versions()
+        self.init_versions()
 
     def add_search_attempts(self, id_versions: int, date_start: str, date_finish: str, description: str):
 
@@ -328,6 +314,7 @@ class DbController:
             description, date_start, date_finish)
         self.__connection_to_db.commit()
         self.__search_attempts = self.init_search_attempts()
+        self.init_search_attempts()
 
     def add_finds(self, name: str, id_search_attempts: int, description: str):
 
@@ -336,6 +323,7 @@ class DbController:
                               description)
         self.__connection_to_db.commit()
         self.__finds = self.init_finds()
+        self.init_finds()
 
     def add_researches(self, id_organization: int, id_search_attempts: int, description: str, id_type_research: int,
                        local_place: str, technique: str):
@@ -346,6 +334,7 @@ class DbController:
             description, id_type_research, local_place, technique)
         self.__connection_to_db.commit()
         self.__research = self.init_research()
+        self.init_research()
 
     def add_indications(self, id_persons: int, testimony: str, id_versions: int, date: str, id_documents: list):
         id_indications = self.get_free_id(self.__indication)
@@ -362,6 +351,8 @@ class DbController:
                 "VALUES (?, ?)", id_documents[i], id_indications)
             self.__connection_to_db.commit()
             self.__document_indications = self.init_document_indications()
+
+        self.init_indication()
 
     def add_document(self, id_type_doc: int, id_search_attempts: int, date: str, description: str, id_author: list,
                      id_person: list, path: str):
