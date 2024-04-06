@@ -181,6 +181,7 @@ def get_image(id):
         if item['id'] == int(id):
             path = item['path']
             break
+    print('Путь до файла с БД:' + path)
     return send_file(path, mimetype='image/pdf')
 
 
@@ -262,22 +263,33 @@ def add_document():
         return empty_response(400)
     file = request.files['file']
     form = json.loads(request.form['data'])
+    folder = app.config['UPLOAD_FOLDER']
+
+    if os.path.isdir(folder): # проверка: запущена программа через ide или с помощью exe файла (потом пофиксить чтобы была единая папка)
+        pass
+    else:
+        folder = app.config['UPLOAD_FOLDER2']
+
     if file:
         count = db.get_document_amount() + 1
         while True:
             filename = str(count) + '.pdf'
-            if os.path.isfile(app.config['UPLOAD_FOLDER'] + '/' + str(count) + '.pdf'):
+            print('Проверка файла ' + folder + '/' + filename)
+            if os.path.isfile(folder + '/' + filename):
                 count += 1
             else:
                 break
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        print('Создание файла в: ' + folder + '/' + filename)
+        file.save(os.path.join(folder, filename))
         db.add_document(form['id_type_doc'], form['id_search_attempts'], form['date'], form['description'],
-                        form['id_author'], form['id_person'], 'docs/' + filename)
+                        form['id_author'], form['id_person'], app.config['UPLOAD_FOLDER'] + '/' + filename)
         return empty_response(200)
     else:
         return empty_response(400)
 
 
 if __name__ == '__main__':
-    app.config['UPLOAD_FOLDER'] = 'docs/'
+    app.config['UPLOAD_FOLDER'] = 'docs'
+    app.config['UPLOAD_FOLDER2'] = '_internal/docs'
     app.run(debug=True)
